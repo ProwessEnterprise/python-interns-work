@@ -3,7 +3,7 @@ import ssl
 import smtplib
 email_sender = 'gottipatisaividhya4280@gmail.com'
 email_password = 'sxrn expn krbu ajkl'
-email_receiver = 'reyyoufazee@gmail.com'
+email_receiver = 'btsot714369@gmail.com'
 subject = 'test mail'
 body = """
 generating a automated mail using python"""
