@@ -1,8 +1,11 @@
 from email.message import EmailMessage
+from dotenv import load_dotenv
+import os
 import ssl
 import smtplib
-email_sender = 'gottipatisaividhya4280@gmail.com'
-email_password = 'sxrn expn krbu ajkl'
+load_dotenv()
+email_sender = os.environ['EMAIL_ADDRESS']
+email_password = os.environ['EMAIL_PASSWORD']
 email_receiver = 'btsot714369@gmail.com'
 subject = 'test mail'
 body = """
