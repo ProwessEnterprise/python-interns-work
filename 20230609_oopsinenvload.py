@@ -25,3 +25,5 @@ body = """
 generating a automated mail using python"""
 email_sender.send_email(email_receiver, subject, body)
 
+
+
