@@ -23,7 +23,7 @@ class EmployeeDatabase:
     def create_table(self):
         query = '''
         CREATE TABLE IF NOT EXISTS employees (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT  PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             age INT,
             designation VARCHAR(255)
@@ -32,12 +32,12 @@ class EmployeeDatabase:
         self.cursor.execute(query)
         self.connection.commit()
 
-    def insert_employee(self, name, age, designation):
+    def insert_employee(self, id, name, age, designation):
         query = '''
-        INSERT INTO employees (name, age, designation)
-        VALUES (%s, %s, %s)
+        INSERT INTO employees (id, name, age, designation)
+        VALUES (%s, %s, %s, %s)
         '''
-        self.cursor.execute(query, (name, age, designation))
+        self.cursor.execute(query, (id, name, age, designation))
         self.connection.commit()
 
     def get_all_employees(self):
@@ -55,9 +55,9 @@ class EmployeeDatabase:
         self.cursor.execute(query,(name, age, designation, id))
         self.connection.commit()
     
-    def delete_employee(self, id):
+    def delete_employee(self,id):
         query= """DELETE FROM employees
-               WHERE id=%s"""
+                WHERE id=%s"""
         self.cursor.execute(query,(id))
         self.connection.commit()
 
@@ -80,14 +80,19 @@ def main():
     db.create_table()
 
     
-    db.insert_employee('John Doe', 25, 'Software Engineer')
+    #db.insert_employee(1,'Suma', 25, 'CyberSecurity')
+    db.insert_employee(2,'Suma', 25, 'CyberSecurity')
+    db.insert_employee(3,'surendra', 27, 'Artificial intelligence')
+    db.insert_employee(4,'Ram', 26, 'Machine learning')
+    db.insert_employee(5,'Vamsi', 24, 'Game Developer')
 
     employees = db.get_all_employees()
     print("All Employees:")
     print(employees)
     
-    db.update_employee(2,'Saividhya', 20, 'developer')
-    db.delete_employee(6)
+    db.update_employee(1,'Saividhya', 20, 'developer')
+    #db.delete_employee(11)
+    
     
    
   
