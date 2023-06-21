@@ -27,10 +27,10 @@ class EmailDatabase:
         self.cursor.execute(query)
         self.connection.commit()
    
-    def insert_emails(self, receiver, subject, body):
-        query = """INSERT INTO emails( receiver, subject, body)
+    def insert_emails(self, recipientname, employeeid, receiver):
+        query = """INSERT INTO emails( recipientname, employeeid, receiver)
                 VALUES(%s,%s,%s)"""
-        self.cursor.execute(query,( receiver, subject, body))
+        self.cursor.execute(query,( recipientname, employeeid, receiver))
         self.connection.commit()
     
     def get_all_emails(self):
@@ -41,6 +41,8 @@ class EmailDatabase:
         for row in result:
             email = {
             "id": row['id'],
+            "recipientname": row['recipientname'],
+            "employeeid": row['employeeid'],
             "receiver": row['receiver'],
             "subject": row['subject'],
             "body": row['body']
@@ -48,26 +50,25 @@ class EmailDatabase:
             emails.append(email)
         return emails
     
-    
-
-
-    
+     
+     
     #def column_add(self):
         query="""ALTER TABLE emails 
-               ADD column receiver VARCHAR(225) AFTER id"""
+               ADD column employeeid BIGINT AFTER recipientname"""
         self.cursor.execute(query)
         self.connection.commit()
     
-    def delete_emails(self):
-        query= """DELETE FROM emails"""
-        self.cursor.execute(query)
+    def delete_emails(self,id):
+        query= """DELETE FROM emails
+               Where id = %s"""
+        self.cursor.execute(query,(id))
         self.connection.commit()
     
-    def update_emails(self,id, receiver, subject, body):
+    def update_emails(self,id, subject, body):
         query= """UPDATE emails 
-               SET receiver=%s, subject=%s, body=%s
+               SET subject=%s, body=%s 
                WHERE id=%s"""
-        self.cursor.execute(query,(receiver, subject, body, id))
+        self.cursor.execute(query,(subject, body, id))
         self.connection.commit()    
     
     #def auto_increment(self):
@@ -92,20 +93,18 @@ def main():
     db.connect()
     db.create_table()
     
-    #subject= 'JUICE SALON MEMBERSHIP ACTIVATION'
-    discount= '20%'
-    body="""Dear Customers,
+    emailinfo_query = "SELECT subject, body FROM emailinfo"
+    db.cursor.execute(emailinfo_query)
+    emailinfo_result = db.cursor.fetchall()
+    for row in emailinfo_result:
+        subject = row['subject']
+        body = row['body']
 
-Congratulations! JUICE SALON is glad to tell you that you just got your membership card! This membership card will let you have our best services on affordable prices. 
-Yes, you can have any service on straight ({} off) .
-Juice Salon thanks you to be our customer and in return, we honour you with our membership card for your next visit. 
-Avail the opportunity and enjoy our quality services as soon as possible.
+        
+   
+    
 
-Wishing to see you again,
-JUICE SALON""".format(discount)
-
-    db.insert_emails(1,'gottipatisaividhya4280@gmail.com','AUTOMATED EMAILS','sending emails through sql')
-    #db.insert_emails(2,'sgottipa@gitam.in','AUTOMATED EMAILS','sending emails through sql')
+    #db.insert_emails('Hemasundar', 16789, 'hemasundar.g@prowessenterprise.com')
     
     #db.column_add()
     
@@ -113,11 +112,11 @@ JUICE SALON""".format(discount)
     print("ALL EMAILS:")
     print(emails)
     
-    #db.update_emails(1, 'gottipatisaividhya4280@gmail.com', subject, body)
+    db.update_emails(37, subject, body )
 
     #db.auto_increment()
 
-    #db.delete_emails(4)
+    #db.delete_emails(35)
 
     db.disconnect()
 
