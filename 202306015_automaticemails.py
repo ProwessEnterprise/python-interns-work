@@ -23,23 +23,25 @@ class EmailDatabase:
         self.cursor = self.connection.cursor()
     
     def get_receiver(self):
-        query="""SELECT receiver, subject, body FROM emails"""
+        query = "SELECT receiver, subject, body FROM emails ORDER BY id DESC LIMIT 1"
         self.cursor.execute(query)
-        result=self.cursor.fetchall()
+        result = self.cursor.fetchone()
         return result
-     
+
+    
     def disconnect(self):
         if self.connection and self.cursor:
            self.cursor.close()
            self.connection.close()
            self.cursor = None
 
-def send_email(email_sender, email_password, email_receiver, subject, body):
+def send_email(email_sender, email_password, email_receiver, email_cc, subject, body):
         em = EmailMessage()
         em['From'] = email_sender
+        em['cc'] = email_cc
         em['To'] = email_receiver
         em['Subject'] = subject
-        em.set_content(body)
+        em.set_content(body, subtype='html')
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
           smtp.login(email_sender, email_password)
@@ -48,6 +50,7 @@ def main():
     load_dotenv()
     sender_address = os.environ['sender_address']
     sender_password = os.environ['sender_password']
+    cc_address = os.environ['cc_address'] . split(',')
     host_name = os.environ['host_name']
     user_name = os.environ['user_name']
     database_password = os.environ['database_password']
@@ -56,12 +59,12 @@ def main():
     db = EmailDatabase( host_name, user_name, database_password, database_name1)
     db.connect()
     
-    emails = db.get_receiver()
-    for email in emails:
-        receiver_email = email['receiver']
-        subject = email['subject']
-        body = email['body']
-        send_email(sender_address, sender_password, receiver_email, subject, body)
+    email = db.get_receiver()
+        
+    receiver_email = email['receiver']
+    subject = email['subject']
+    body = email['body']
+    send_email(sender_address, sender_password, receiver_email, cc_address, subject, body)
 
 
     db.disconnect()
