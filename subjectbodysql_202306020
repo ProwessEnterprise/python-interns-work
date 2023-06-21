@@ -1,0 +1,145 @@
+import pymysql.cursors
+from dotenv import load_dotenv
+import os
+
+class EmailDatabase1:
+    def __init__(self, host, user, password, database):
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.connection = None
+        self.cursor = None
+
+    def connect(self):
+        self.connection = pymysql.connect(host=self.host,
+                                          user=self.user,
+                                          password=self.password,
+                                          database=self.database,
+                                          cursorclass=pymysql.cursors.DictCursor)
+        self.cursor = self.connection.cursor()
+    
+    def create_table(self):
+        query = """CREATE TABLE IF NOT EXISTS emailinfo(
+                   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                   subject VARCHAR(255),
+                   body text)"""
+        self.cursor.execute(query)
+        self.connection.commit()
+   
+    def insert_emailinfo(self, subject, body):
+        query = """INSERT INTO emailinfo(subject, body)
+                VALUES(%s,%s)"""
+        self.cursor.execute(query,(subject, body))
+        self.connection.commit()
+    
+    def get_all_emailinfo(self):
+        query = "SELECT * FROM emailinfo ORDER BY id DESC LIMIT 1"
+        self.cursor.execute(query)
+        result = self.cursor.fetchall()
+        emails = []
+        for row in result:
+            email = {
+            "id": row['id'],
+            "subject": row['subject'],
+            "body": row['body']
+            }
+            emails.append(email)
+        return emails
+    
+    def disconnect(self):
+        if self.connection and self.cursor:
+            self.cursor.close()
+            self.connection.close()
+            self.cursor = None
+            self.connection = None
+def main():
+    load_dotenv()
+    host_name = os.environ['host_name']
+    user_name = os.environ['user_name']
+    database_password = os.environ['database_password']
+    database_name1 = os.environ['database_name1']
+
+    db = EmailDatabase1(host_name, user_name, database_password, database_name1)
+    db.connect()
+    db.create_table()
+
+    emails_query = "SELECT recipientname,employeeid FROM emails"
+    db.cursor.execute(emails_query)
+    emails_result = db.cursor.fetchall()
+    for row in emails_result:
+        recipientname = row['recipientname']
+        employeeid = row['employeeid']
+    
+    recipient_name = recipientname
+    employee_id = employeeid
+    asset_id = "12345"
+    asset_type = "Laptop"
+    asset_model = "Lenovo"
+    dispatch_date = "21-06-2023"
+    
+    subject = "Asset Tracking | {} | {} | Employee id: {}".format(asset_type, recipient_name, employee_id)
+   
+    body ="""<html>
+            <head>
+            <style>
+             table, th, td{{
+                    border : 1px solid white;
+                    border-collapse: collapse;
+               }}
+               th, td{{
+                    background-color:#DADBDD;
+                }}
+              </style>
+              </head>
+              <body>
+              <h4> Dear, {} </h4>
+              <p> We hope this email finds you well. On behalf of Prowess Enterprise, we are pleased to inform you that Asset ID. {} has been dispatched to you as per the request. Please find the details of the dispatched assets below.</p>
+              <table border>
+              <tr align="center">
+                <td  colspan="2"> Asset Dispatch Form</td>
+              </tr>
+              <tr align="center">
+                <td>Asset Type </td>
+                <td> {} </td>
+              </tr>
+              <tr align=" center">
+                <td> Asset Model </td>
+                <td> {} </td>
+            <tr align="center">
+                <td> Asset Id </td>
+                <td> {}</td>
+            </tr>
+            <tr align= "center>
+                <td> Dispatch Date </td>
+                <td> {}</td>
+            </tr>
+            <tr align="center">
+                <td> Dispatch By </td>
+                <td> Prowess Enterprise </td>
+            </tr>
+            </table><br>
+            <p>The dispatched laptop includes the necessary accessories such as a charger and a laptop bag. We kindly request to keep the asset and its accessories secure and in good working condition.</p>
+            <p> Thank you for your cooperation. Require any further assistance, please don't hesitate to contact us.</p>
+<pre> 
+Best Regards,
+Finance Team,
+Prowess Enterprise(India) Pvt Ltd
++91 xxxxxxxxxx
+</pre>
+</body>
+</html> """.format(recipient_name,asset_id, asset_type,asset_model, asset_id, dispatch_date)
+
+    db.insert_emailinfo(subject,body)
+    
+    emails = db.get_all_emailinfo()
+    print("ALL EMAILS:")
+    print(emails)
+
+    db.disconnect()
+
+if __name__ == '__main__':
+    main()
+    
+    
+
