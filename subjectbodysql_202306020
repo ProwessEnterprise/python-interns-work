@@ -73,63 +73,24 @@ def main():
     
     recipient_name = recipientname
     employee_id = employeeid
-    asset_id = "12345"
+    asset_id = "1305023"
     asset_type = "Laptop"
-    asset_model = "Lenovo"
-    dispatch_date = "21-06-2023"
+    asset_model = "Dell Inspiron "
+    dispatch_date = "22-06-2023"
     
     subject = "Asset Tracking | {} | {} | Employee id: {}".format(asset_type, recipient_name, employee_id)
    
-    body ="""<html>
-            <head>
-            <style>
-             table, th, td{{
-                    border : 1px solid white;
-                    border-collapse: collapse;
-               }}
-               th, td{{
-                    background-color:#DADBDD;
-                }}
-              </style>
-              </head>
-              <body>
-              <h4> Dear, {} </h4>
-              <p> We hope this email finds you well. On behalf of Prowess Enterprise, we are pleased to inform you that Asset ID. {} has been dispatched to you as per the request. Please find the details of the dispatched assets below.</p>
-              <table border>
-              <tr align="center">
-                <td  colspan="2"> Asset Dispatch Form</td>
-              </tr>
-              <tr align="center">
-                <td>Asset Type </td>
-                <td> {} </td>
-              </tr>
-              <tr align=" center">
-                <td> Asset Model </td>
-                <td> {} </td>
-            <tr align="center">
-                <td> Asset Id </td>
-                <td> {}</td>
-            </tr>
-            <tr align= "center>
-                <td> Dispatch Date </td>
-                <td> {}</td>
-            </tr>
-            <tr align="center">
-                <td> Dispatch By </td>
-                <td> Prowess Enterprise </td>
-            </tr>
-            </table><br>
-            <p>The dispatched laptop includes the necessary accessories such as a charger and a laptop bag. We kindly request to keep the asset and its accessories secure and in good working condition.</p>
-            <p> Thank you for your cooperation. Require any further assistance, please don't hesitate to contact us.</p>
-<pre> 
-Best Regards,
-Finance Team,
-Prowess Enterprise(India) Pvt Ltd
-+91 xxxxxxxxxx
-</pre>
-</body>
-</html> """.format(recipient_name,asset_id, asset_type,asset_model, asset_id, dispatch_date)
-
+    if asset_type.lower() == "laptop":
+        body_file_name = "laptopbody.html"
+    elif asset_type.lower() == "printer":
+        body_file_name = "printerbody.html"
+    else:
+        body_file_name = "modembody.html" 
+    
+    with open(body_file_name, "r") as body_file:
+       body = body_file.read().format(recipient_name,asset_id, asset_type,asset_model, asset_id, dispatch_date)
+    
+   
     db.insert_emailinfo(subject,body)
     
     emails = db.get_all_emailinfo()
