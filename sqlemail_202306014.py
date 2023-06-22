@@ -21,9 +21,8 @@ class EmailDatabase:
     
     def create_table(self):
         query = """CREATE TABLE IF NOT EXISTS emails(
-                   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                   subject VARCHAR(255),
-                   body text)"""
+                   id BIGINT AUTO_INCREMENT PRIMARY KEY
+                   )"""
         self.cursor.execute(query)
         self.connection.commit()
    
@@ -44,8 +43,6 @@ class EmailDatabase:
             "recipientname": row['recipientname'],
             "employeeid": row['employeeid'],
             "receiver": row['receiver'],
-            "subject": row['subject'],
-            "body": row['body']
             }
             emails.append(email)
         return emails
@@ -58,17 +55,24 @@ class EmailDatabase:
         self.cursor.execute(query)
         self.connection.commit()
     
+    #def column_delete(self):
+        query="""ALTER TABLE emails
+                DROP column body """
+        self.cursor.execute(query)
+        self.connection.commit()
+              
+    
     def delete_emails(self,id):
         query= """DELETE FROM emails
                Where id = %s"""
         self.cursor.execute(query,(id))
         self.connection.commit()
     
-    def update_emails(self,id, subject, body):
+    def update_emails(self,id, recipientname, employeeid):
         query= """UPDATE emails 
-               SET subject=%s, body=%s 
+               SET recipientname=%s, employeeid=%s 
                WHERE id=%s"""
-        self.cursor.execute(query,(subject, body, id))
+        self.cursor.execute(query,(recipientname, employeeid, id))
         self.connection.commit()    
     
     #def auto_increment(self):
@@ -93,30 +97,26 @@ def main():
     db.connect()
     db.create_table()
     
-    emailinfo_query = "SELECT subject, body FROM emailinfo"
-    db.cursor.execute(emailinfo_query)
-    emailinfo_result = db.cursor.fetchall()
-    for row in emailinfo_result:
-        subject = row['subject']
-        body = row['body']
+   
 
         
    
     
 
-    #db.insert_emails('Hemasundar', 16789, 'hemasundar.g@prowessenterprise.com')
+    db.insert_emails('rohith', 25989, 'sgottipa@gitam.in')
     
     #db.column_add()
+    #db.column_delete()
     
     emails = db.get_all_emails()
     print("ALL EMAILS:")
     print(emails)
     
-    db.update_emails(37, subject, body )
+    #db.update_emails(37, subject, body )
 
     #db.auto_increment()
 
-    #db.delete_emails(35)
+    #db.delete_emails(34)
 
     db.disconnect()
 
