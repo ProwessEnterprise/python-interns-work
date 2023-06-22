@@ -71,12 +71,22 @@ def main():
         recipientname = row['recipientname']
         employeeid = row['employeeid']
     
+    assets_query = "SELECT assetid, assettype, assetmodel, dispatchdate FROM assets"
+    db.cursor.execute(assets_query)
+    assets_result = db.cursor.fetchall()
+    for row in assets_result:
+        assetid = row['assetid']
+        assettype = row['assettype']
+        assetmodel = row['assetmodel']
+        dispatchdate = row['dispatchdate']
+
+    
     recipient_name = recipientname
     employee_id = employeeid
-    asset_id = "1305023"
-    asset_type = "Laptop"
-    asset_model = "Dell Inspiron "
-    dispatch_date = "22-06-2023"
+    asset_id =assetid
+    asset_type = assettype
+    asset_model = assetmodel
+    dispatch_date = dispatchdate
     
     subject = "Asset Tracking | {} | {} | Employee id: {}".format(asset_type, recipient_name, employee_id)
    
