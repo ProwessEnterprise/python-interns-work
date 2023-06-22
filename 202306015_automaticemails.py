@@ -23,10 +23,18 @@ class EmailDatabase:
         self.cursor = self.connection.cursor()
     
     def get_receiver(self):
-        query = "SELECT receiver, subject, body FROM emails ORDER BY id DESC LIMIT 1"
+        query = "SELECT receiver FROM emails ORDER BY id DESC LIMIT 1"
         self.cursor.execute(query)
         result = self.cursor.fetchone()
         return result
+    
+    def get_receiver1(self):
+        query = "SELECT subject, body FROM emailinfo ORDER BY id DESC LIMIT 1"
+        self.cursor.execute(query)
+        result = self.cursor.fetchone()
+        return result
+    
+
 
     
     def disconnect(self):
@@ -60,10 +68,11 @@ def main():
     db.connect()
     
     email = db.get_receiver()
-        
     receiver_email = email['receiver']
-    subject = email['subject']
-    body = email['body']
+    
+    email1 = db.get_receiver1()
+    subject = email1['subject']
+    body = email1['body']
     send_email(sender_address, sender_password, receiver_email, cc_address, subject, body)
 
 
