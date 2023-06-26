@@ -103,7 +103,7 @@ def main():
    
     
 
-    db.insert_emails('rohith', 25989, 'sgottipa@gitam.in')
+    db.insert_emails('anu', 45689, 'gottipatisaividhya4280@gmail.com')
     
     #db.column_add()
     #db.column_delete()
