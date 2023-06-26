@@ -1,0 +1,60 @@
+import pymysql.cursors
+from dotenv import load_dotenv
+import os
+
+class EmailDatabase2:
+    def __init__(self, host, user, password, database):
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.connection = None
+        self.cursor = None
+
+    def connect(self):
+        self.connection = pymysql.connect(host=self.host,
+                                          user=self.user,
+                                          password=self.password,
+                                          database=self.database,
+                                          cursorclass=pymysql.cursors.DictCursor)
+        self.cursor = self.connection.cursor()
+    
+    def create_table(self):
+        query = """CREATE TABLE IF NOT EXISTS assets(
+                   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                    assetid BIGINT,
+                    assettype VARCHAR(255),
+                    assetmodel VARCHAR(255),
+                    dispatchdate DATE)"""
+        self.cursor.execute(query)
+        self.connection.commit()
+   
+    def insert_assets(self, assetid, assettype, assetmodel, dispatchdate):
+        query = """INSERT INTO assets( assetid, assettype, assetmodel, dispatchdate)
+                VALUES(%s,%s,%s,%s)"""
+        self.cursor.execute(query,(assetid, assettype, assetmodel, dispatchdate))
+        self.connection.commit()
+
+    def disconnect(self):
+        if self.connection and self.cursor:
+            self.cursor.close()
+            self.connection.close()
+            self.cursor = None
+            self.connection = None
+def main():
+    load_dotenv()
+    host_name = os.environ['host_name']
+    user_name = os.environ['user_name']
+    database_password = os.environ['database_password']
+    database_name1 = os.environ['database_name1']
+
+    db = EmailDatabase2(host_name, user_name, database_password, database_name1)
+    db.connect()
+    db.create_table()
+    db.insert_assets(356748, 'modem', 'NETGEAR','22-6-23')
+    db.disconnect()
+
+if __name__ == '__main__':
+    main()
+
+    
