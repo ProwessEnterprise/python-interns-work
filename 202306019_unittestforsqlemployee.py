@@ -18,7 +18,7 @@ class EmailDatabaseTest(unittest.TestCase):
         self.db.create_table()
   
     def tearDown(self): 
-        #self.db.delete_emails()
+        self.db.delete_emails()
         self.db.disconnect()
   
     def get_unique_id(self):
@@ -38,7 +38,7 @@ class EmailDatabaseTest(unittest.TestCase):
         
     
         
-        self.db.insert_emails( 'automatedemail@gmail.com', subject, body)
+        #self.db.insert_emails( 'automatedemail@gmail.com', subject, body)
 
 
         emails = self.db.get_all_emails()
